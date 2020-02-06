@@ -2,7 +2,6 @@ package com.es.phoneshop.model.product;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,13 +29,13 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public synchronized Product getProduct(Long id) throws Exception {
+    public synchronized Product getProduct(Long id) throws ProductNotFoundException {
         Optional<Product> tmpProduct = products.stream()
                 .filter(product -> product.getId().equals(id))
                 .findFirst();
 
         if (!tmpProduct.isPresent()) {
-            throw new Exception("Product not found");
+            throw new ProductNotFoundException("Product not found");
         }
 
         return tmpProduct.get();
@@ -45,7 +44,8 @@ public class ArrayListProductDao implements ProductDao {
     @Override
     public synchronized List<Product> findProducts() {
         return products.stream()
-                .filter(product -> product.getPrice() != null && product.getStock() > 0)
+                .filter(product -> product.getPrice() != null)
+                .filter(product -> product.getStock() > 0)
                 .collect(Collectors.toList());
     }
 
