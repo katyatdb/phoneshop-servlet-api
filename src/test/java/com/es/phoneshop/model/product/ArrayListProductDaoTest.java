@@ -9,81 +9,74 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
-public class ArrayListProductDaoTest
-{
+public class ArrayListProductDaoTest {
+
     private ArrayListProductDao productDao;
+    private Product product;
 
     @Before
     public void setup() {
         productDao = ArrayListProductDao.getInstance();
+        product = new Product(1L, "sgs", "Samsung Galaxy S", new BigDecimal(100), null, 100, null);
+
+        productDao.save(product);
     }
 
     @After
-    public void tearDown() {
+    public void tearUp() {
         productDao.setProducts(new ArrayList<>());
     }
 
     @Test
-    public void testGetProduct() throws Exception {
-        Product product = new Product();
-        product.setId(1L);
-        productDao.save(product);
-
+    public void testGetProduct() {
         assertNotNull(productDao.getProduct(1L));
+    }
+
+    @Test(expected = ProductNotFoundException.class)
+    public void testGetProductException() {
+        productDao.getProduct(2L);
     }
 
     @Test
     public void testFindProducts() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setPrice(new BigDecimal(20));
-        product.setStock(31);
-        productDao.save(product);
-
-        assertEquals(1L, (long) productDao.findProducts().get(0).getId());
+        assertEquals(1, productDao.findProducts().size());
     }
 
     @Test
     public void testFindProductsNoResults() {
-        assertTrue(productDao.findProducts().isEmpty());
+        productDao.delete(1L);
+        assertEquals(0, productDao.findProducts().size());
     }
 
     @Test
     public void testFindNullPriceProducts() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setStock(20);
-
-        assertEquals(0, productDao.findProducts().size());
+        product.setPrice(null);
+        assertTrue(productDao.findProducts().isEmpty());
     }
 
     @Test
     public void testFindZeroStockProducts() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setPrice(new BigDecimal(42));
-
-        assertEquals(0, productDao.findProducts().size());
+        product.setStock(0);
+        assertTrue(productDao.findProducts().isEmpty());
     }
 
     @Test
     public void testSaveProduct() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setPrice(new BigDecimal(20));
-        product.setStock(31);
-        productDao.save(product);
+        Product productToSave = new Product(2L, "iphone6", "Apple iPhone 6S", new BigDecimal(300), null, 42, null);
+        productDao.save(productToSave);
+        assertEquals(2, productDao.findProducts().size());
+    }
 
+    @Test
+    public void testSaveEqualIdProducts() {
+        Product productToSave = new Product(1L, "iphone6", "Apple iPhone 6S", new BigDecimal(300), null, 42, null);
+        productDao.save(productToSave);
         assertEquals(1, productDao.findProducts().size());
     }
 
     @Test
     public void testDeleteProduct() {
-        Product product = new Product();
-        product.setId(1L);
-        productDao.save(product);
         productDao.delete(1L);
-
-        assertEquals(0, productDao.findProducts().size());
+        assertTrue(productDao.findProducts().isEmpty());
     }
 }
