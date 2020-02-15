@@ -8,24 +8,46 @@
     <p>
         Welcome to Expert-Soft training!
     </p>
+
+    <form method="get">
+        <input type="text" name="query" value="${param.query}">
+        <button type="submit">Search</button>
+    </form>
+
     <table>
         <thead>
         <tr>
             <td>Image</td>
-            <td>Description</td>
-            <td class="price">Price</td>
+            <td>
+                Description
+                <tags:sortLink sortBy="description" orderBy="asc"/>
+                <tags:sortLink sortBy="description" orderBy="desc"/>
+            </td>
+            <td class="price">
+                Price
+                <tags:sortLink sortBy="price" orderBy="asc"/>
+                <tags:sortLink sortBy="price" orderBy="desc"/>
+            </td>
         </tr>
         </thead>
         <c:forEach var="product" items="${products}">
             <tr>
                 <td>
-                    <img class="product-tile"
-                         src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${product.imageUrl}">
+                    <a href="products/${product.id}">
+                        <img class="product-tile"
+                             src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${product.imageUrl}">
+                    </a>
                 </td>
-                <td>${product.description}</td>
+
+                <td>
+                    <a href="products/${product.id}">${product.description}</a>
+                </td>
+
                 <td class="price">
-                    <fmt:formatNumber value="${product.price}" type="currency"
-                                      currencySymbol="${product.currency.symbol}"/>
+                    <a href="products/price-history/${product.id}">
+                        <fmt:formatNumber value="${product.price}" type="currency"
+                                          currencySymbol="${product.currency.symbol}"/>
+                    </a>
                 </td>
             </tr>
         </c:forEach>

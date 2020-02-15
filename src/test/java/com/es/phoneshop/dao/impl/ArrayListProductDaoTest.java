@@ -1,5 +1,6 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.dao.impl;
 
+import com.es.phoneshop.model.Product;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,10 +12,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -30,7 +31,7 @@ public class ArrayListProductDaoTest {
     private ArrayList<Product> products;
 
     @InjectMocks
-    private ArrayListProductDao productDao = new ArrayListProductDao();
+    private ArrayListProductDao productDao = ArrayListProductDao.getInstance();
 
     @Before
     public void setup() {
@@ -38,10 +39,12 @@ public class ArrayListProductDaoTest {
         when(product1.getId()).thenReturn(1L);
         when(product1.getPrice()).thenReturn(new BigDecimal(200));
         when(product1.getStock()).thenReturn(23);
+        when(product1.getDescription()).thenReturn("Samsung");
 
         when(product2.getId()).thenReturn(2L);
         when(product2.getPrice()).thenReturn(new BigDecimal(300));
         when(product2.getStock()).thenReturn(42);
+        when(product2.getDescription()).thenReturn("iPhone");
     }
 
     @Test
@@ -67,25 +70,72 @@ public class ArrayListProductDaoTest {
     @Test
     public void testFindProductsNoResults() {
         products.clear();
+
         assertEquals(0, productDao.findProducts().size());
     }
 
     @Test
     public void testFindNullPriceProducts() {
         when(product1.getPrice()).thenReturn(null);
-        assertEquals(1, productDao.findProducts().size());
+
+        assertEquals(Collections.singletonList(product2), productDao.findProducts());
     }
 
     @Test
     public void testFindZeroStockProducts() {
         when(product1.getStock()).thenReturn(0);
-        assertEquals(1, productDao.findProducts().size());
+
+        assertEquals(Collections.singletonList(product2), productDao.findProducts());
+    }
+
+    @Test
+    public void testFindProductsWithQuery() {
+        assertEquals(Collections.singletonList(product2), productDao.findProducts("iphone"));
+    }
+
+    @Test
+    public void testFindProductsWithNoQuery() {
+        assertEquals(Arrays.asList(product1, product2), productDao.findProducts(null));
+        assertEquals(Arrays.asList(product1, product2), productDao.findProducts(""));
+    }
+
+    @Test
+    public void testSortByDescriptionAsc() {
+        assertEquals(Arrays.asList(product2, product1), productDao.findProducts(null, "description", "asc"));
+    }
+
+    @Test
+    public void testSortByDescriptionDesc() {
+        assertEquals(Arrays.asList(product1, product2), productDao.findProducts(null, "description", "desc"));
+    }
+
+    @Test
+    public void testSortByPriceAsc() {
+        assertEquals(Arrays.asList(product1, product2), productDao.findProducts(null, "price", "asc"));
+    }
+
+    @Test
+    public void testSortByPriceDesc() {
+        assertEquals(Arrays.asList(product2, product1), productDao.findProducts(null, "price", "desc"));
+    }
+
+    @Test
+    public void testFindWithNoSort() {
+        assertEquals(Collections.singletonList(product1), productDao.findProducts("samsung"));
+    }
+
+    @Test
+    public void testFindProductsWithNoOrder() {
+        assertEquals(Arrays.asList(product2, product1), productDao.findProducts(null, "description", null));
+        assertEquals(Arrays.asList(product2, product1), productDao.findProducts(null, "description", ""));
     }
 
     @Test
     public void testSaveProduct() {
         when(productToSave.getId()).thenReturn(3L);
+
         productDao.save(productToSave);
+
         assertEquals(3, products.size());
     }
 
@@ -97,19 +147,23 @@ public class ArrayListProductDaoTest {
     @Test(expected = IllegalArgumentException.class)
     public void testSaveNullIdProduct() {
         when(productToSave.getId()).thenReturn(null);
+
         productDao.save(productToSave);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveEqualIdProducts() {
         when(productToSave.getId()).thenReturn(2L);
+
         productDao.save(productToSave);
+
         assertEquals(2, products.size());
     }
 
     @Test
     public void testDeleteProduct() {
         productDao.delete(1L);
+
         assertFalse(products.contains(product1));
     }
 

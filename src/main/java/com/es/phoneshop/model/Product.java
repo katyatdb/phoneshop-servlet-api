@@ -1,7 +1,9 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Currency;
+import java.util.Map;
 
 public class Product {
     private Long id;
@@ -17,6 +19,7 @@ public class Product {
     private Currency currency;
     private int stock;
     private String imageUrl;
+    private Map<LocalDate, BigDecimal> priceHistory;
 
     public Product() {
     }
@@ -85,5 +88,13 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Map<LocalDate, BigDecimal> getPriceHistory() {
+        return priceHistory;
+    }
+
+    public void setPriceHistory(Map<LocalDate, BigDecimal> priceHistory) {
+        this.priceHistory = priceHistory;
     }
 }
