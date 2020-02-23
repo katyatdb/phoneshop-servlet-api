@@ -121,7 +121,8 @@ public class ArrayListProductDaoTest {
 
     @Test
     public void testFindWithNoSort() {
-        assertEquals(Collections.singletonList(product1), productDao.findProducts("samsung"));
+        assertEquals(Collections.singletonList(product1), productDao.findProducts("samsung", null, "desc"));
+        assertEquals(Collections.singletonList(product1), productDao.findProducts("samsung", "", "asc"));
     }
 
     @Test

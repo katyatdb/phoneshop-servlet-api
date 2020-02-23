@@ -16,7 +16,10 @@
         <c:forEach var="entry" items="${product.priceHistory}">
             <tr>
                 <td>${entry.key}</td>
-                <td>${entry.value}</td>
+                <td>
+                    <fmt:formatNumber value="${entry.value}" type="currency"
+                                      currencySymbol="${product.currency.symbol}"/>
+                </td>
             </tr>
         </c:forEach>
     </table>

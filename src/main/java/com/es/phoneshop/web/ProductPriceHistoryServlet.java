@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,7 +20,7 @@ public class ProductPriceHistoryServlet extends HttpServlet {
     private ProductDao productDao;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         productDao = ArrayListProductDao.getInstance();
     }
 

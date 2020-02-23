@@ -45,7 +45,7 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findProducts(String query) {
+    public synchronized List<Product> findProducts(String query) {
         if (query == null || query.isEmpty()) {
             return findProducts();
         }
@@ -68,7 +68,7 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findProducts(String query, String sort, String order) {
+    public synchronized List<Product> findProducts(String query, String sort, String order) {
         List<Product> products = findProducts(query);
         if (sort == null || sort.isEmpty()) {
             return products;
@@ -97,8 +97,9 @@ public class ArrayListProductDao implements ProductDao {
             comparator = comparator.reversed();
         }
 
-        products.sort(comparator);
-        return products;
+        return products.stream()
+                .sorted(comparator)
+                .collect(Collectors.toList());
     }
 
     @Override
