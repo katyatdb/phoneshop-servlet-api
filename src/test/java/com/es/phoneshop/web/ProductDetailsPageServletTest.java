@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.RequestDispatcher;
@@ -48,6 +49,8 @@ public class ProductDetailsPageServletTest {
     private Cart cart;
     @Mock
     private RecentlyViewedService recentlyViewedService;
+    @Spy
+    private ArrayList<Product> recentlyViewed;
 
     @InjectMocks
     private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
@@ -58,6 +61,7 @@ public class ProductDetailsPageServletTest {
         when(request.getPathInfo()).thenReturn("/23");
         when(request.getLocale()).thenReturn(Locale.UK);
         when(cartService.getCart(request)).thenReturn(cart);
+        when(recentlyViewedService.getProducts(request)).thenReturn(recentlyViewed);
     }
 
     @Test
@@ -69,7 +73,7 @@ public class ProductDetailsPageServletTest {
         servlet.doGet(request, response);
 
         verify(request).setAttribute("product", product);
-        verify(request).setAttribute("cart", cartService.getCart(request));
+        verify(request).setAttribute("recentlyViewed", recentlyViewedService.getProducts(request));
         verify(requestDispatcher).forward(request, response);
     }
 

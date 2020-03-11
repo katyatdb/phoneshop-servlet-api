@@ -5,9 +5,11 @@ header {
   text-shadow: 1px 1px 0px #ededed, 4px 4px 0px rgba(0,0,0,0.15);
 
 }
+
 header a:link {
   text-decoration: none;
 }
+
 header img {
   max-width: 64px;
 }
@@ -16,16 +18,27 @@ table {
   border-collapse: collapse;
   border : 1px solid gray;
 }
+
 td {
   padding: 10px;
   border : 1px solid gray;
   vertical-align: top;
 }
+
 .price, .quantity {
   text-align: right;
 }
+
 img.product-tile {
   max-width: 64px;
+}
+
+.total-price {
+    font-weight: bold;
+}
+
+.error, .message, .form, .recently-viewed, .cart, .update {
+    margin: 15px 0;
 }
 
 .message {
@@ -34,22 +47,20 @@ img.product-tile {
 
 .error {
     color: red;
-    margin-bottom: 20px;
-}
-
-.form {
-    margin: 10px 0;
 }
 
 .recently-viewed {
     border-collapse: separate;
     border-spacing: 5px;
     border: #fff;
-    margin: 15px 0;
 }
 
 .recently-viewed img {
     max-width: 100px;
+}
+
+.cart-link {
+    margin-left: 100px;
 }
 
 /* Page specific styles */

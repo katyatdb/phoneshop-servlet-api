@@ -13,6 +13,7 @@
         <img src="${pageContext.servletContext.contextPath}/images/logo.svg"/>
         PhoneShop
     </a>
+    <a class="cart-link" href="${pageContext.servletContext.contextPath}/cart">Cart</a>
 </header>
 <main>
     <jsp:doBody/>

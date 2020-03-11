@@ -53,6 +53,6 @@
         </c:forEach>
     </table>
 
+    <jsp:include page="/cart/minicart"/>
     <tags:recentlyViewed/>
-
 </tags:master>

@@ -43,7 +43,7 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
-    public void add(Cart cart, Long productId, int quantity) throws OutOfStockException, IllegalArgumentException {
+    public void add(Cart cart, long productId, int quantity) throws OutOfStockException, IllegalArgumentException {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Invalid value");
         }
@@ -67,8 +67,43 @@ public class HttpSessionCartService implements CartService {
             cart.getCartItems().add(new CartItem(product, quantity));
         }
 
-        BigDecimal productQuantity = new BigDecimal(quantity);
-        BigDecimal productTotalPrice = product.getPrice().multiply(productQuantity);
-        cart.setTotalPrice(cart.getTotalPrice().add(productTotalPrice));
+        recalculateTotalPrice(cart);
+    }
+
+    @Override
+    public void update(Cart cart, long productId, int quantity) throws OutOfStockException {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Invalid value");
+        }
+
+        Product product = productDao.getProduct(productId);
+
+        Optional<CartItem> cartItem = cart.getCartItems().stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst();
+
+        if (product.getStock() < quantity) {
+            throw new OutOfStockException("There are not enough products in stock. Number of products: " +
+                    product.getStock());
+        }
+
+        if (cartItem.isPresent()) {
+            cartItem.get().setQuantity(quantity);
+            recalculateTotalPrice(cart);
+        }
+    }
+
+    @Override
+    public void delete(Cart cart, long productId) {
+        cart.getCartItems().removeIf(cartItem -> cartItem.getProduct().getId().equals(productId));
+        recalculateTotalPrice(cart);
+    }
+
+    void recalculateTotalPrice(Cart cart) {
+        BigDecimal totalPrice = cart.getCartItems().stream()
+                .map(cartItem -> cartItem.getProduct().getPrice().multiply(new BigDecimal(cartItem.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        cart.setTotalPrice(totalPrice);
     }
 }

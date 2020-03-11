@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,6 +43,10 @@ public class HttpSessionCartServiceTest {
     @Spy
     private Cart cart;
     @Spy
+    private CartItem cartItem1;
+    @Spy
+    private CartItem cartItem2;
+    @Spy
     private ArrayList<CartItem> cartItems;
 
     @InjectMocks
@@ -49,16 +54,16 @@ public class HttpSessionCartServiceTest {
 
     @Before
     public void setup() {
-        when(cart.getCartItems()).thenReturn(cartItems);
-        when(productDao.getProduct(1L)).thenReturn(product1);
-        when(productDao.getProduct(2L)).thenReturn(product2);
+        cartItems.add(cartItem1);
+        cartItem1.setQuantity(1);
 
+        when(cart.getCartItems()).thenReturn(cartItems);
+        when(cartItem1.getProduct()).thenReturn(product1);
+
+        when(productDao.getProduct(1L)).thenReturn(product1);
         when(product1.getId()).thenReturn(1L);
         when(product1.getStock()).thenReturn(5);
         when(product1.getPrice()).thenReturn(new BigDecimal(100));
-
-        when(product2.getStock()).thenReturn(5);
-        when(product2.getPrice()).thenReturn(new BigDecimal(200));
     }
 
     @Test
@@ -85,6 +90,7 @@ public class HttpSessionCartServiceTest {
 
     @Test
     public void testAddProductsWithEqualId() throws OutOfStockException {
+        cartItems.clear();
         cartService.add(cart, 1L, 1);
         cartService.add(cart, 1L, 1);
 
@@ -98,10 +104,33 @@ public class HttpSessionCartServiceTest {
     }
 
     @Test
-    public void testTotalPrice() throws OutOfStockException {
-        cartService.add(cart, 1L, 1);
-        cartService.add(cart, 2L, 2);
+    public void testUpdateCart() throws OutOfStockException {
+        cartService.update(cart, 1L, 3);
 
-        assertEquals(new BigDecimal(500), cart.getTotalPrice());
+        assertEquals(3, cart.getCartItems().get(0).getQuantity());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testUpdateCartWithNegativeQuantity() throws OutOfStockException {
+        cartService.update(cart, 1L, -5);
+    }
+
+    @Test(expected = OutOfStockException.class)
+    public void testUpdateCartOutOfStock() throws OutOfStockException {
+        cartService.update(cart, 1L, 6);
+    }
+
+    @Test
+    public void testRecalculateTotalPrice() {
+        when(cart.getCartItems()).thenReturn(Arrays.asList(cartItem1, cartItem2));
+        when(cartItem2.getProduct()).thenReturn(product2);
+        when(product2.getPrice()).thenReturn(new BigDecimal(200));
+        when(cartItem1.getQuantity()).thenReturn(2);
+        when(cartItem2.getQuantity()).thenReturn(3);
+
+        // 2 * 100 + 3 * 200
+        cartService.recalculateTotalPrice(cart);
+
+        assertEquals(new BigDecimal(800), cart.getTotalPrice());
     }
 }

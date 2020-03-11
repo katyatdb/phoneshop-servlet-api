@@ -4,8 +4,8 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="product" class="com.es.phoneshop.model.Product" scope="request"/>
+
 <tags:master pageTitle="Product Details">
-    <div>${cart}</div>
     <h2>${product.description}</h2>
     <img src="${product.imageUrl}"/>
     <div>
@@ -18,11 +18,12 @@
     <form class="form" method="post" action="${pageContext.request.contextPath}/products/${product.id}">
         <input class="quantity" type="text" name="quantity"
                value="${not empty param.quantity ? param.quantity : 1}">
-        <button type="submit" value="Add to cart">Add to cart</button>
+        <input type="submit" value="Add to cart">
     </form>
     <div class="message">${param.message}</div>
     <div class="error">${error}</div>
 
+    <jsp:include page="/cart/minicart"/>
     <tags:recentlyViewed/>
 
     <a href="${pageContext.request.contextPath}">Back</a>

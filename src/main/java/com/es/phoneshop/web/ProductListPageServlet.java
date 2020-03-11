@@ -21,6 +21,7 @@ public class ProductListPageServlet extends HttpServlet {
         productDao = ArrayListProductDao.getInstance();
         recentlyViewedService = HttpSessionRecentlyViewedService.getInstance();
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String query = request.getParameter("query");

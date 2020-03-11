@@ -40,7 +40,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
             recentlyViewedService.add(req, product);
 
             req.setAttribute("product", product);
-            req.setAttribute("cart", cartService.getCart(req));
             req.setAttribute("recentlyViewed", recentlyViewedService.getProducts(req));
             req.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(req, resp);
         } catch (IllegalArgumentException | NoSuchElementException e) {
@@ -50,7 +49,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long productId = getProductId(req);
+        long productId = getProductId(req);
         NumberFormat numberFormat = NumberFormat.getInstance(req.getLocale());
         int quantity;
 
