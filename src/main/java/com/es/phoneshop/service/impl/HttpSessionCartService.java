@@ -48,7 +48,7 @@ public class HttpSessionCartService implements CartService {
             throw new IllegalArgumentException("Invalid value");
         }
 
-        Product product = productDao.getProduct(productId);
+        Product product = productDao.get(productId);
 
         Optional<CartItem> cartItem = cart.getCartItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
@@ -76,7 +76,7 @@ public class HttpSessionCartService implements CartService {
             throw new IllegalArgumentException("Invalid value");
         }
 
-        Product product = productDao.getProduct(productId);
+        Product product = productDao.get(productId);
 
         Optional<CartItem> cartItem = cart.getCartItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))

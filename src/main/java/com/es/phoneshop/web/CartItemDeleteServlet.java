@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class CartItemDeleteServlet extends HttpServlet {
 
-    CartService cartService;
+    private CartService cartService;
 
     @Override
     public void init() throws ServletException {

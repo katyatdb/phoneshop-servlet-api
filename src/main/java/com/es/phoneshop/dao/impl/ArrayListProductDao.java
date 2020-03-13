@@ -1,5 +1,6 @@
 package com.es.phoneshop.dao.impl;
 
+import com.es.phoneshop.dao.AbstractDao;
 import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.enums.OrderBy;
 import com.es.phoneshop.enums.SortBy;
@@ -10,10 +11,12 @@ import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
-public class ArrayListProductDao implements ProductDao {
-    private ArrayList<Product> products = new ArrayList<>();
+public class ArrayListProductDao extends AbstractDao<Product> implements ProductDao {
+    private ArrayList<Product> products;
 
     private ArrayListProductDao() {
+        products = new ArrayList<>();
+        super.init(products);
     }
 
     public static ArrayListProductDao getInstance() {
@@ -25,15 +28,8 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public synchronized Product getProduct(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Product id cannot be null");
-        }
-
-        return products.stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Product not found"));
+    public synchronized <E> Product get(E id) {
+        return super.get(id);
     }
 
     @Override
@@ -104,32 +100,11 @@ public class ArrayListProductDao implements ProductDao {
 
     @Override
     public synchronized void save(Product product) {
-        if (product == null) {
-            throw new IllegalArgumentException("Product cannot be null");
-        }
-        if (product.getId() == null) {
-            throw new IllegalArgumentException("Product id cannot be null");
-        }
-
-        boolean noneMatchEqualId = products.stream()
-                .noneMatch(product1 -> product1.getId().equals(product.getId()));
-
-        if (noneMatchEqualId) {
-            products.add(product);
-        } else {
-            throw new IllegalArgumentException("Product with such id is already exist");
-        }
+        super.save(product);
     }
 
     @Override
-    public synchronized void delete(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Product id cannot be null");
-        }
-
-        boolean isDeleted = products.removeIf(product -> product.getId().equals(id));
-        if (!isDeleted) {
-            throw new NoSuchElementException("Product with such id doesn't exist");
-        }
+    public synchronized <E> void delete(E id) {
+        super.delete(id);
     }
 }

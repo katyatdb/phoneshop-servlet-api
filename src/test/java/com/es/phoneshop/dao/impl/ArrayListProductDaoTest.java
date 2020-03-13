@@ -49,17 +49,17 @@ public class ArrayListProductDaoTest {
 
     @Test
     public void testGetProduct() {
-        assertEquals(product1.getId(), productDao.getProduct(1L).getId());
+        assertEquals(product1.getId(), productDao.get(1L).getId());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetNullIdProduct() {
-        productDao.getProduct(null);
+        productDao.get(null);
     }
 
     @Test(expected = NoSuchElementException.class)
     public void testGetProductWithWrongId() {
-        productDao.getProduct(3L);
+        productDao.get(3L);
     }
 
     @Test

@@ -35,7 +35,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             Long productId = getProductId(req);
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.get(productId);
 
             recentlyViewedService.add(req, product);
 

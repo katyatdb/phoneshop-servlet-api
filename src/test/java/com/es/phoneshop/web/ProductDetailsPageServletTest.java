@@ -66,7 +66,7 @@ public class ProductDetailsPageServletTest {
 
     @Test
     public void testDoGet() throws ServletException, IOException {
-        when(productDao.getProduct(23L)).thenReturn(product);
+        when(productDao.get(23L)).thenReturn(product);
         when(recentlyViewedService.getProducts(request))
                 .thenReturn(new ArrayList<>(Collections.singletonList(product)));
 
@@ -79,7 +79,7 @@ public class ProductDetailsPageServletTest {
 
     @Test
     public void testDoGetWithNullId() throws ServletException, IOException {
-        when(productDao.getProduct(23L))
+        when(productDao.get(23L))
                 .thenThrow(new IllegalArgumentException());
 
         servlet.doGet(request, response);
@@ -89,7 +89,7 @@ public class ProductDetailsPageServletTest {
 
     @Test
     public void testDoGetWithWrongId() throws ServletException, IOException {
-        when(productDao.getProduct(23L))
+        when(productDao.get(23L))
                 .thenThrow(new NoSuchElementException());
 
         servlet.doGet(request, response);

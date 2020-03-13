@@ -50,4 +50,9 @@ public class MiniCartServletTest {
         verify(request).setAttribute("cart", cart);
         verify(requestDispatcher).include(request, response);
     }
+
+    @Test
+    public void testDoPost() throws ServletException, IOException {
+        testDoGet();
+    }
 }

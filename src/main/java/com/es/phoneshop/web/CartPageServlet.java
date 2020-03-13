@@ -50,7 +50,7 @@ public class CartPageServlet extends HttpServlet {
                 } catch (ParseException e) {
                     errors.put(productId, "Value must be a number");
                 } catch (IllegalArgumentException | OutOfStockException e) {
-                    errors.put(productId, e.getMessage());
+                    errors.put(productId, "Invalid value");
                 }
             }
         }

@@ -1,7 +1,7 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.dao.ProductDao;
-import com.es.phoneshop.model.Product;
+import com.es.phoneshop.model.Order;
+import com.es.phoneshop.service.OrderService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductPriceHistoryServletTest {
+public class OrderOverviewPageServletTest {
 
     @Mock
     private HttpServletRequest request;
@@ -30,25 +30,26 @@ public class ProductPriceHistoryServletTest {
     @Mock
     private RequestDispatcher requestDispatcher;
     @Mock
-    private Product product;
+    private OrderService orderService;
     @Mock
-    private ProductDao productDao;
+    private Order order;
 
     @InjectMocks
-    private ProductPriceHistoryServlet servlet = new ProductPriceHistoryServlet();
+    private OrderOverviewPageServlet servlet = new OrderOverviewPageServlet();
 
     @Before
     public void setup() {
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
-        when(request.getPathInfo()).thenReturn("/23");
-        when(productDao.get(23L)).thenReturn(product);
+        when(request.getPathInfo()).thenReturn("/abcd");
     }
 
     @Test
     public void testDoGet() throws ServletException, IOException {
+        when(orderService.getBySecureId("abcd")).thenReturn(order);
+
         servlet.doGet(request, response);
 
-        verify(request).setAttribute("product", product);
+        verify(request).setAttribute("order", order);
         verify(requestDispatcher).forward(request, response);
     }
 }

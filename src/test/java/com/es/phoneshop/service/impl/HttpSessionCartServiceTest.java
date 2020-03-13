@@ -60,7 +60,7 @@ public class HttpSessionCartServiceTest {
         when(cart.getCartItems()).thenReturn(cartItems);
         when(cartItem1.getProduct()).thenReturn(product1);
 
-        when(productDao.getProduct(1L)).thenReturn(product1);
+        when(productDao.get(1L)).thenReturn(product1);
         when(product1.getId()).thenReturn(1L);
         when(product1.getStock()).thenReturn(5);
         when(product1.getPrice()).thenReturn(new BigDecimal(100));

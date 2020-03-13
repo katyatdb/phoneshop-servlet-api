@@ -6,18 +6,18 @@
 <jsp:useBean id="cart" class="com.es.phoneshop.model.Cart" scope="request"/>
 
 <tags:master pageTitle="Cart">
-    <form method="post" action="${pageContext.servletContext.contextPath}/cart">
-        <c:if test="${empty cart.cartItems}">
-            <h2>Cart is empty</h2>
-        </c:if>
+    <c:if test="${empty cart.cartItems}">
+        <h2>Cart is empty</h2>
+    </c:if>
 
-        <c:if test="${not empty errors}">
-            <div class="error">Cart update failed</div>
-        </c:if>
+    <c:if test="${not empty requestScope.errors}">
+        <div class="error">Cart update failed</div>
+    </c:if>
 
-        <div class="message">${param.message}</div>
+    <div class="message">${param.message}</div>
 
-        <c:if test="${not empty cart.cartItems}">
+    <c:if test="${not empty cart.cartItems}">
+        <form method="post" action="${pageContext.servletContext.contextPath}/cart">
             <table class="cart">
                 <thead>
                 <tr>
@@ -43,8 +43,8 @@
                                    value="${not empty paramValues.quantity[status.index] ?
                                paramValues.quantity[status.index] : cartItem.quantity}">
 
-                            <c:if test="${not empty errors[product.id]}">
-                                <p class="error">${errors[product.id]}</p>
+                            <c:if test="${not empty requestScope.errors[product.id]}">
+                                <p class="error">${requestScope.errors[product.id]}</p>
                             </c:if>
                             <input type="hidden" name="productId" value="${product.id}">
                         </td>
@@ -68,8 +68,12 @@
             </div>
 
             <input class="update" type="submit" value="Update">
-        </c:if>
-    </form>
+        </form>
+
+        <form method="get" action="${pageContext.servletContext.contextPath}/checkout">
+            <input type="submit" value="Checkout">
+        </form>
+    </c:if>
 
     <a href="${pageContext.request.contextPath}">Back</a>
 </tags:master>

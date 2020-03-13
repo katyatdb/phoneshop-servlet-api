@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.Currency;
 import java.util.Map;
 
-public class Product implements Serializable {
+public class Product extends DaoItem implements Serializable {
     private Long id;
     private String code;
     private String description;

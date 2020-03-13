@@ -27,7 +27,7 @@ public class ProductPriceHistoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long productId = getProductId(req);
-        Product product = productDao.getProduct(productId);
+        Product product = productDao.get(productId);
 
         Map<LocalDate, BigDecimal> sortedPriceHistory = product
                 .getPriceHistory().entrySet().stream()
