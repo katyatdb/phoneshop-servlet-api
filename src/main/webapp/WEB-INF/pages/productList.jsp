@@ -14,6 +14,8 @@
         <button type="submit">Search</button>
     </form>
 
+    <a href="advanced-search">Advanced search</a>
+
     <table>
         <thead>
         <tr>

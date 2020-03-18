@@ -4,12 +4,15 @@ import com.es.phoneshop.dao.AbstractDao;
 import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.enums.OrderBy;
 import com.es.phoneshop.enums.SortBy;
+import com.es.phoneshop.enums.WordCount;
 import com.es.phoneshop.model.Product;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ArrayListProductDao extends AbstractDao<Product> implements ProductDao {
     private ArrayList<Product> products;
@@ -95,6 +98,47 @@ public class ArrayListProductDao extends AbstractDao<Product> implements Product
 
         return products.stream()
                 .sorted(comparator)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public synchronized List<Product> findProducts(String description, String wordCountStr, BigDecimal minPrice, BigDecimal maxPrice) {
+        boolean isNullQuery = Stream.of(description, wordCountStr, minPrice, maxPrice)
+                .allMatch(Objects::isNull);
+
+        if (isNullQuery) {
+            return new ArrayList<>();
+        }
+
+        WordCount wordCount = WordCount.valueOf(wordCountStr.toUpperCase().replace(" ", "_"));
+
+        if (description == null || description.isEmpty()) {
+            return products.stream()
+                    .filter(product -> product.getPrice() != null)
+                    .filter(product -> product.getStock() > 0)
+                    .filter(minPrice != null ? product -> product.getPrice().compareTo(minPrice) >= 0 : product -> true)
+                    .filter(maxPrice != null ? product -> product.getPrice().compareTo(maxPrice) <= 0 : product -> true)
+                    .collect(Collectors.toList());
+
+        }
+
+        String[] words = description.toLowerCase().split(" ");
+        Predicate<Product> match;
+
+        if (wordCount == WordCount.ANY_WORD) {
+            match = product -> Arrays.stream(words)
+                    .anyMatch(word -> product.getDescription().toLowerCase().contains(word));
+        } else {
+            match = product -> Arrays.stream(words)
+                    .allMatch(word -> product.getDescription().toLowerCase().contains(word));
+        }
+
+        return products.stream()
+                .filter(product -> product.getPrice() != null)
+                .filter(product -> product.getStock() > 0)
+                .filter(match)
+                .filter(minPrice != null ? product -> product.getPrice().compareTo(minPrice) >= 0 : product -> true)
+                .filter(maxPrice != null ? product -> product.getPrice().compareTo(maxPrice) <= 0 : product -> true)
                 .collect(Collectors.toList());
     }
 
